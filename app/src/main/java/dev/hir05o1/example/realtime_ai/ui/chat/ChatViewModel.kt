@@ -28,6 +28,13 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    // viewModelが破棄されるとき
+    override fun onCleared() {
+        super.onCleared()
+        // WebSocketの接続を閉じる
+        repo.closeConnection()
+    }
+
     fun send(text: String) = repo.sendMessage(text)
 }
 

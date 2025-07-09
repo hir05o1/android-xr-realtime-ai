@@ -11,5 +11,8 @@ class ChatRepository @Inject constructor(
     fun observeMessages(): Flow<String> = ws.events
     fun sendMessage(message: String) = ws.send(message)
     fun initConnection() = ws.connect("wss://echo.websocket.org")
+    fun closeConnection(code: Int = 1000, reason: String? = "Chat ended normally") {
+        ws.close(code, reason)
+    }
 }
 
