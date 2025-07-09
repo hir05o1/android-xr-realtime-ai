@@ -38,8 +38,11 @@ import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
+import dagger.hilt.android.AndroidEntryPoint
+import dev.hir05o1.example.realtime_ai.ui.chat.ChatView
 import dev.hir05o1.example.realtime_ai.ui.theme.RealtimeaiTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("RestrictedApi")
@@ -49,16 +52,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RealtimeaiTheme {
-                val spatialConfiguration = LocalSpatialConfiguration.current
-                if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
-                    Subspace {
-                        MySpatialContent(
-                            onRequestHomeSpaceMode = spatialConfiguration::requestHomeSpaceMode
-                        )
-                    }
-                } else {
-                    My2DContent(onRequestFullSpaceMode = spatialConfiguration::requestFullSpaceMode)
-                }
+                ChatView()
+//                val spatialConfiguration = LocalSpatialConfiguration.current
+//                if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
+//                    Subspace {
+//                        MySpatialContent(
+//                            onRequestHomeSpaceMode = spatialConfiguration::requestHomeSpaceMode
+//                        )
+//                    }
+//                } else {
+//                    My2DContent(onRequestFullSpaceMode = spatialConfiguration::requestFullSpaceMode)
+//                }
             }
         }
     }
