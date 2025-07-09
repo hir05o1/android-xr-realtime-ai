@@ -81,7 +81,7 @@ fun ChatView(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = msg,
+                        text = msg.text,
                         modifier = Modifier.padding(12.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )

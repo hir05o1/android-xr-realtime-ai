@@ -3,38 +3,58 @@ package dev.hir05o1.example.realtime_ai.ui.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.hir05o1.example.realtime_ai.data.ChatRepository
+import dev.hir05o1.example.realtime_ai.data.gpt.GptRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Chat + Gemini Live API を 1 つの ViewModel で扱う実装例
+ */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val repo: ChatRepository
+    private val openAiRepo: GptRepository   // ★ 追加
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<List<String>>(emptyList())
-    val uiState: StateFlow<List<String>> = _uiState.asStateFlow()
+    data class ChatMessage(
+        val text: String,
+        val isUser: Boolean,
+        val timestamp: Long = System.currentTimeMillis()
+    )
+
+    private val _uiState = MutableStateFlow<List<ChatMessage>>(emptyList())
+    val uiState: StateFlow<List<ChatMessage>> = _uiState.asStateFlow()
 
     init {
-        repo.initConnection()                          // 1 度だけ接続
+        openAiRepo.startSession()               // ★ OpenAI 接続
+
         viewModelScope.launch {
-            repo.observeMessages().collect { msg ->
-                _uiState.update { it + msg }           // 受信を UI へ
+            // OpenAI の応答を受け取る
+            openAiRepo.observeAi().collect { text ->
+                if (text.isNotBlank()) {
+                    _uiState.update {
+                        it + ChatMessage(text = text, isUser = false)
+                    }
+                }
             }
         }
     }
 
-    // viewModelが破棄されるとき
-    override fun onCleared() {
-        super.onCleared()
-        // WebSocketの接続を閉じる
-        repo.closeConnection()
+    fun send(text: String) {
+        // ユーザーのメッセージをUIに表示
+        _uiState.update {
+            it + ChatMessage(text = text, isUser = true)
+        }
+        // OpenAIに送信
+        openAiRepo.sendToAi(text)
     }
 
-    fun send(text: String) = repo.sendMessage(text)
+    override fun onCleared() {
+        super.onCleared()
+        openAiRepo.close()
+    }
 }
-
