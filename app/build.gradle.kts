@@ -75,8 +75,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // ViewModel utilities for Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose.v291)
+    // Hilt
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    // Coil (Async Image)
+    implementation(libs.coil.compose)
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
     // okhttp
     implementation(libs.okhttp)
 }
