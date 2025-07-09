@@ -85,4 +85,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // okhttp
     implementation(libs.okhttp)
+    // kotlin serialization
+    implementation(libs.kotlinx.serialization.json)
 }
